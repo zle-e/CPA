@@ -1,8 +1,5 @@
 host: "0.0.0.0"
-port: 8080
+port: 8000
 auth-dir: "/app/data"
 api-keys:
   - "test-key-123"
-remote-management:
-  allow-remote: true
-  secret-key: "your-manage-key"
