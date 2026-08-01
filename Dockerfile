@@ -1,12 +1,14 @@
-# 构建阶段：升级 Go 版本至 1.26，匹配项目要求
+# 构建阶段
 FROM golang:1.26-alpine AS builder
 WORKDIR /build
 RUN apk add --no-cache git
-# 开启自动工具链，兼容版本波动
 ENV GOTOOLCHAIN=auto
+
+# 克隆官方源码
 RUN git clone https://github.com/router-for-me/CLIProxyAPI.git .
-# 静态编译，无系统依赖
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -trimpath -o CLIProxyAPI .
+
+# 编译 cmd 目录下的主程序，静态编译无系统依赖
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -trimpath -o CLIProxyAPI ./cmd/
 
 # 运行阶段
 FROM alpine:3.20
@@ -19,7 +21,7 @@ RUN addgroup -S app && adduser -S app -G app \
     && mkdir -p /app /data \
     && chown -R app:app /app /data
 
-# 拷贝二进制、配置、启动脚本
+# 拷贝二进制、配置文件、启动脚本
 COPY --from=builder /build/CLIProxyAPI ./
 COPY config.yaml ./
 COPY entrypoint.sh ./
