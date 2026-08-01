@@ -13,4 +13,4 @@ COPY config.yaml ./
 
 EXPOSE 8000
 # 使用官方标准双横杠参数启动
-CMD ["./cli-proxy-api", "--config", "config.yaml"]
+CMD ["sh", "-c", "./cli-proxy-api --config config.yaml 2>&1; echo \"exit code: $?\"; sleep 600"]
