@@ -1,15 +1,15 @@
 FROM alpine:3.20
 WORKDIR /app
 RUN apk add --no-cache ca-certificates tzdata curl
-ENV TZ=Asia/Shanghai
 
-# 下载官方预编译二进制，避开编译坑
-RUN curl -L -o CLIProxyAPI https://github.com/router-for-me/CLIProxyAPI/releases/latest/download/CLIProxyAPI_linux_amd64 \
-    && chmod +x CLIProxyAPI
+# 创建数据目录并开放权限，避免启动时报错
+RUN mkdir -p /app/data && chmod 777 /app/data
 
-# 直接拷贝配置文件，不做动态修改
+# 下载官方预编译二进制
+RUN curl -L -o cli-proxy-api https://github.com/router-for-me/CLIProxyAPI/releases/latest/download/CLIProxyAPI_linux_amd64 \
+    && chmod +x cli-proxy-api
+
 COPY config.yaml ./
 
 EXPOSE 8080
-# 直接启动，指定配置文件
-CMD ["./CLIProxyAPI", "--config", "config.yaml"]
+CMD ["./cli-proxy-api", "--config", "config.yaml"]
